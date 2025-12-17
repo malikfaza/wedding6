@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Wedding of Malik & Annisa - Midnight Edition</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700;900&family=Great+Vibes&family=Nunito:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        night: {
+                            DEFAULT: '#000e1e', // Base Color Request
+                            light: '#0a1a2f',
+                            accent: '#112240',
+                        },
+                        starlight: {
+                            DEFAULT: '#E2E8F0', // Cool white
+                            glow: '#94a3b8'
+                        },
+                        moon: {
+                            light: '#fffbeb',
+                            gold: '#fbbf24',
+                            glow: '#fcd34d'
+                        }
+                    },
+                    fontFamily: {
+                        'cinzel': ['"Cinzel Decorative"', 'serif'],
+                        'vibes': ['"Great Vibes"', 'cursive'],
+                        'playfair': ['"Playfair Display"', 'serif'],
+                        'arabic': ['"Amiri"', 'serif'],
+                        'nunito': ['"Nunito"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'night-gradient': 'linear-gradient(to bottom, #000e1e, #020c1b, #051626)',
+                        'gold-gradient': 'linear-gradient(45deg, #FFD700, #FDB931, #FFD700)',
+                        'glass-night': 'linear-gradient(135deg, rgba(17, 34, 64, 0.7), rgba(10, 25, 47, 0.4))',
+                    },
+                    animation: {
+                        'twinkle': 'twinkle 4s ease-in-out infinite',
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.3, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 10px #fbbf24, 0 0 20px #fcd34d' },
+                            '50%': { boxShadow: '0 0 25px #fbbf24, 0 0 40px #fcd34d' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* --- GLOBAL & STARS --- */
+        html, body {
+            overflow-x: hidden;
+            background-color: #000e1e;
+            color: #cbd5e1;
+        }
+
+        body.modal-open { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
+
+        /* Star Background Logic */
+        .stars-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: var(--opacity);
+        }
+
+        /* --- GLASSMORPHISM NIGHT --- */
+        .glass-card {
+            background: rgba(13, 25, 48, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* --- LANTERN SHAPE --- */
+        .lantern-shape {
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+        }
+
+        /* --- GATE CURTAIN (VERTICAL OPENING) --- */
+        .gate-panel {
+            transition: transform 2.5s cubic-bezier(0.77, 0, 0.175, 1);
+            background-color: #000e1e;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            width: 100%;
+            height: 50%; /* Setengah tinggi layar */
+            position: absolute;
+            left: 0;
+            z-index: 20;
+            overflow: visible !important; /* PENTING: Agar hiasan bulat tidak terpotong */
+        }
+
+        .gate-top {
+            top: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background-position: 0 0, 40px 60px, 130px 270px;
+            display: flex;
+            align-items: flex-end; /* Supaya dekorasi ada di bawah */
+            justify-content: center;
+        }
+
+        .gate-bottom {
+            bottom: 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background-position: 0 0, 60px 80px, 150px 290px;
+        }
+
+        /* Arah Bukaan: Atas naik, Bawah turun */
+        .is-open .gate-top { transform: translateY(-100%); }
+        .is-open .gate-bottom { transform: translateY(100%); }
+        
+        /* --- SEAL DECORATION (Attached to Top Gate) --- */
+        .gate-seal {
+            position: absolute;
+            bottom: -30px; /* Setengah dari tinggi 60px agar pas di tengah garis potong */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: #fbbf24; /* moon-gold */
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(251,191,36,0.8);
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000e1e;
+        }
+        
+        /* Dekorasi tambahan cincin luar */
+        .gate-seal::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 1px solid rgba(251,191,36,0.3);
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* --- CUSTOM SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000e1e; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+
+        /* --- ORNAMENT DECOR SVG --- */
+        .corner-ornament {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            fill: none;
+            stroke: #fbbf24; /* moon-gold */
+            stroke-width: 1;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 20;
+            filter: drop-shadow(0 0 5px rgba(251,191,36,0.3));
+        }
+    </style>
+</head>
+<body class="modal-open font-nunito antialiased selection:bg-moon-gold selection:text-night">
+
+    <!-- AUDIO -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://files.catbox.moe/1skpmc.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- STAR FIELD BG -->
+    <div class="stars-container" id="star-field"></div>
+    
+    <!-- MOON GLOW ACCENT -->
+    <div class="fixed top-[-100px] right-[-100px] w-[500px] h-[500px] bg-blue-900/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-100px] left-[-100px] w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- === OPENING GATES (TOP - BOTTOM) === -->
+    <div id="opening-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden">
+        
+        <!-- Top Gate (Holds the Seal) -->
+        <div class="gate-panel gate-top">
+            <!-- Seal Decoration (Menempel di gerbang atas) -->
+            <div class="gate-seal">
+                <i class="fa-solid fa-moon"></i>
+            </div>
+        </div>
+        
+        <!-- Bottom Gate -->
+        <div class="gate-panel gate-bottom"></div>
+
+        <!-- Center Content -->
+        <div id="opening-content" class="relative z-30 text-center p-8 transition-all duration-1000">
+            <!-- Floating Illustration -->
+            <div class="animate-float-slow mb-6 relative">
+                 <div class="absolute inset-0 bg-yellow-400 rounded-full blur-[40px] opacity-20"></div>
+                 <img src="https://img.freepik.com/premium-photo/chibi-cartoon-muslim-wedding-couple-ai-generated-image_316488-7875.jpg" class="w-48 h-48 object-cover rounded-full border-4 border-moon-gold shadow-[0_0_30px_rgba(251,191,36,0.4)] mx-auto relative z-10" alt="Cute Muslim Couple">
+            </div>
+            
+            <h3 class="font-vibes text-3xl text-moon-light mb-2 tracking-wide">Walimatul Ursy</h3>
+            <h1 class="font-cinzel text-4xl md:text-6xl text-white mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">Malik & Annisa</h1>
+            
+            <button onclick="openInvitation()" class="group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium text-white transition duration-300 ease-out border border-white/20 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:bg-white/5 hover:border-moon-gold bg-night/50 backdrop-blur-sm">
+                <span class="mr-2 group-hover:animate-bounce">🌙</span>
+                <span class="font-cinzel text-sm tracking-[0.2em]">BUKA UNDANGAN</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- === MAIN CONTENT === -->
+    <main id="main-content" class="relative w-full opacity-0 transition-opacity duration-[2000ms]">
+        
+        <!-- Music Control -->
+        <div class="fixed bottom-6 right-6 z-[60]">
+             <button onclick="toggleMusic()" class="w-12 h-12 glass-card rounded-full flex items-center justify-center text-moon-gold border border-moon-gold/30 hover:bg-moon-gold hover:text-night transition-all duration-300 shadow-[0_0_15px_rgba(251,191,36,0.3)] animate-pulse-glow">
+                <i id="icon-music" class="fa-solid fa-compact-disc text-xl animate-spin-slow"></i>
+            </button>
+        </div>
+
+        <!-- HERO SECTION -->
+        <section class="min-h-screen flex flex-col items-center justify-center relative px-4 overflow-hidden pt-20">
+            <!-- Nature Background Overlay -->
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507646870319-3d1428c0b933?q=80&w=2000')] bg-cover bg-center z-0 opacity-20"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-[#000e1e] via-[#000e1e]/80 to-[#000e1e] z-0"></div>
+
+            <!-- Big Moon Background -->
+            <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[280px] h-[280px] md:w-[400px] md:h-[400px] bg-gradient-to-b from-moon-light to-moon-gold rounded-full blur-[2px] opacity-20 z-0"></div>
+            <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[300px] h-[300px] md:w-[420px] md:h-[420px] bg-white rounded-full blur-[60px] opacity-10 z-0"></div>
+
+            <div class="relative z-10 text-center space-y-4" id="hero-content">
+                <p class="font-vibes text-moon-gold text-3xl md:text-4xl" data-aos="fade-down">The Wedding of</p>
+                
+                <div class="relative py-8" data-aos="zoom-in" data-aos-duration="1500">
+                    <h1 class="font-cinzel text-5xl md:text-7xl text-white drop-shadow-lg leading-tight">
+                        Malik <br> <span class="text-3xl md:text-4xl font-vibes text-moon-gold">&</span> <br> Annisa
+                    </h1>
+                </div>
+
+                <div class="glass-card px-6 py-3 rounded-full inline-block mt-8" data-aos="fade-up">
+                    <p class="font-playfair text-lg md:text-xl text-slate-200">Selasa, 10 Maret 2026</p>
+                </div>
+
+                <!-- Countdown in Lanterns -->
+                <div id="countdown" class="flex flex-wrap justify-center gap-4 mt-12" data-aos="fade-up" data-aos-delay="300">
+                    <!-- Javascript fills this -->
+                </div>
+            </div>
+
+            <!-- Mosque Silhouette Bottom -->
+            <div class="absolute bottom-0 left-0 w-full z-20 pointer-events-none opacity-40">
+               <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full h-32 md:h-48 fill-night-light">
+                    <path d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,224C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                    <circle cx="200" cy="320" r="80" />
+                    <circle cx="1200" cy="320" r="100" />
+               </svg>
+            </div>
+        </section>
+
+        <!-- COUPLE SECTION -->
+        <section class="py-24 px-4 relative">
+             <div class="max-w-5xl mx-auto">
+                 <div class="glass-card rounded-[2rem] p-8 md:p-12 relative overflow-hidden border-t border-moon-gold/20">
+                    
+                    <!-- SVG DECOR: Top Left -->
+                    <svg class="corner-ornament top-0 left-0" viewBox="0 0 100 100" style="transform: rotate(180deg);">
+                        <path d="M95,95 C90,50 50,10 5,5 M30,30 C50,30 70,50 70,70" stroke-linecap="round" />
+                        <circle cx="5" cy="5" r="3" fill="#fbbf24" />
+                        <circle cx="95" cy="95" r="2" fill="#fbbf24" />
+                    </svg>
+
+                    <!-- SVG DECOR: Bottom Right -->
+                    <svg class="corner-ornament bottom-0 right-0" viewBox="0 0 100 100">
+                        <path d="M95,95 C90,50 50,10 5,5 M30,30 C50,30 70,50 70,70" stroke-linecap="round" />
+                        <circle cx="5" cy="5" r="3" fill="#fbbf24" />
+                        <circle cx="95" cy="95" r="2" fill="#fbbf24" />
+                    </svg>
+
+                    <!-- Quran Quote -->
+                    <div class="text-center mb-16 relative z-10">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Basmala.svg" alt="Bismillah" class="h-10 mx-auto mb-6 filter invert opacity-70">
+                        <p class="font-arabic text-2xl text-moon-gold mb-6 leading-loose px-4" dir="rtl">
+                            وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا...
+                        </p>
+                        <p class="font-nunito text-slate-300 text-sm max-w-2xl mx-auto italic leading-relaxed">
+                            "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya..."
+                            <br><span class="text-moon-gold font-bold not-italic mt-2 block">(QS. Ar-Rum: 21)</span>
+                        </p>
+                    </div>
+
+                    <!-- Couple Grid -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                        <!-- Groom -->
+                        <div class="flex flex-col items-center group" data-aos="fade-right">
+                             <div class="relative w-64 h-64 mb-6">
+                                 <div class="absolute inset-0 bg-night-light lantern-shape border-2 border-moon-gold/50 shadow-[0_0_20px_rgba(251,191,36,0.15)] z-10"></div>
+                                 <div class="absolute inset-0 lantern-shape overflow-hidden z-20">
+                                      <img src="https://img.freepik.com/premium-vector/premium-highquality-cartoon-design-part-11_768745-426.jpg?semt=ais_hybrid&w=740&q=80" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100">
+                                 </div>
+                                 <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-[2px] h-16 bg-gradient-to-b from-transparent to-moon-gold opacity-50"></div>
+                             </div>
+                             <h3 class="font-cinzel text-2xl text-white mb-1">Malik Faza</h3>
+                             <p class="text-moon-gold font-vibes text-xl">Putra Bpk. Umar</p>
+                             <div class="h-[1px] w-20 bg-slate-700 mt-4"></div>
+                        </div>
+
+                        <!-- Bride -->
+                        <div class="flex flex-col items-center group" data-aos="fade-left">
+                             <div class="relative w-64 h-64 mb-6">
+                                 <div class="absolute inset-0 bg-night-light lantern-shape border-2 border-moon-gold/50 shadow-[0_0_20px_rgba(251,191,36,0.15)] z-10"></div>
+                                 <div class="absolute inset-0 lantern-shape overflow-hidden z-20">
+                                      <img src="https://img.freepik.com/premium-vector/chibi-cute-kawaii-character-cartoon-illustration-teacher-muslim-hijab-girl-holding-book_161819-762.jpg?w=360" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100">
+                                 </div>
+                                 <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-[2px] h-16 bg-gradient-to-b from-transparent to-moon-gold opacity-50"></div>
+                             </div>
+                             <h3 class="font-cinzel text-2xl text-white mb-1">Annisa Sholiha</h3>
+                             <p class="text-moon-gold font-vibes text-xl">Putri Bpk. Husain</p>
+                             <div class="h-[1px] w-20 bg-slate-700 mt-4"></div>
+                        </div>
+                    </div>
+                 </div>
+             </div>
+        </section>
+
+        <!-- EVENT DETAILS -->
+        <section class="py-20 relative">
+            <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20" xmlns="http://www.w3.org/2000/svg">
+                <line x1="50%" y1="10%" x2="20%" y2="50%" stroke="white" stroke-dasharray="5,5" />
+                <line x1="50%" y1="10%" x2="80%" y2="50%" stroke="white" stroke-dasharray="5,5" />
+                <circle cx="50%" cy="10%" r="3" fill="#fcd34d" />
+            </svg>
+
+            <div class="max-w-4xl mx-auto px-4 relative z-10">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="font-cinzel text-3xl text-moon-light mb-2">Rangkaian Acara</h2>
+                    <p class="text-slate-400 font-nunito text-sm">Kami mengundang Anda untuk menjadi bagian dari hari bahagia kami</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Akad -->
+                    <div class="glass-card p-8 rounded-xl text-center relative overflow-hidden group" data-aos="flip-up">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-moon-gold to-transparent"></div>
+                        <div class="w-12 h-12 mx-auto bg-moon-gold/10 rounded-full flex items-center justify-center text-moon-gold mb-4 group-hover:bg-moon-gold group-hover:text-night transition-colors">
+                            <i class="fa-solid fa-handshake text-xl"></i>
+                        </div>
+                        <h3 class="font-cinzel text-2xl text-white mb-2">Akad Nikah</h3>
+                        <p class="font-playfair text-moon-gold mb-4">Selasa, 10 Maret 2026</p>
+                        <p class="text-slate-300 text-sm mb-6">Pukul 08:00 WIB - Selesai</p>
+                        <div class="bg-night/50 p-4 rounded-lg border border-slate-700/50">
+                            <p class="text-xs text-slate-400">Bertempat di Kediaman Mempelai Wanita</p>
+                        </div>
+                    </div>
+
+                    <!-- Resepsi -->
+                    <div class="glass-card p-8 rounded-xl text-center relative overflow-hidden group" data-aos="flip-up" data-aos-delay="200">
+                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-moon-gold to-transparent"></div>
+                         <div class="w-12 h-12 mx-auto bg-moon-gold/10 rounded-full flex items-center justify-center text-moon-gold mb-4 group-hover:bg-moon-gold group-hover:text-night transition-colors">
+                            <i class="fa-solid fa-utensils text-xl"></i>
+                        </div>
+                        <h3 class="font-cinzel text-2xl text-white mb-2">Resepsi</h3>
+                        <p class="font-playfair text-moon-gold mb-4">Selasa, 10 Maret 2026</p>
+                        <p class="text-slate-300 text-sm mb-6">Pukul 11:00 WIB - Selesai</p>
+                        <div class="bg-night/50 p-4 rounded-lg border border-slate-700/50">
+                            <p class="text-xs text-slate-400">Bertempat di Kediaman Mempelai Wanita</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 text-center" data-aos="fade-up">
+                     <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-moon-gold text-moon-gold hover:bg-moon-gold hover:text-night transition-all text-sm font-bold tracking-wider uppercase">
+                        <i class="fa-solid fa-location-dot"></i>
+                        Lihat Peta Lokasi
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY -->
+        <section class="py-24 relative bg-night-light/30">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12" data-aos="fade-down">
+                    <span class="font-vibes text-3xl text-moon-gold">Moments to Remember</span>
+                    <h2 class="font-cinzel text-3xl text-white mt-2">Gallery</h2>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Photo 1 -->
+                    <div class="col-span-2 row-span-2 relative group rounded-xl overflow-hidden border-4 border-slate-800 shadow-2xl" data-aos="fade-right">
+                         <img src="https://img.freepik.com/premium-photo/chibi-cartoon-muslim-wedding-couple-ai-generated-image_316488-7875.jpg" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                         <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
+                             <p class="text-white font-vibes text-xl">Our Journey Begins</p>
+                         </div>
+                    </div>
+                    <!-- Photo 2 -->
+                    <div class="col-span-1 row-span-1 rounded-xl overflow-hidden border-2 border-slate-800" data-aos="fade-up" data-aos-delay="100">
+                        <img src="https://img.freepik.com/premium-vector/premium-highquality-cartoon-design-part-11_768745-426.jpg?semt=ais_hybrid&w=740&q=80" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <!-- Photo 3 -->
+                    <div class="col-span-1 row-span-1 rounded-xl overflow-hidden border-2 border-slate-800" data-aos="fade-up" data-aos-delay="200">
+                        <img src="https://img.freepik.com/premium-vector/chibi-cute-kawaii-character-cartoon-illustration-teacher-muslim-hijab-girl-holding-book_161819-762.jpg?w=360" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                    </div>
+                     <!-- Photo 4 -->
+                    <div class="col-span-2 row-span-1 rounded-xl overflow-hidden border-2 border-slate-800 relative" data-aos="fade-up" data-aos-delay="300">
+                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIlsvIfyQEaNKKKWC2AMZZgPSCVNhroVJ5Ag&s" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                         <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                             <span class="text-white font-cinzel">Beautiful Night</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP & GIFT -->
+        <section class="py-24 px-4 relative border-t border-slate-800">
+            <!-- Curtain Background Overlay -->
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000')] bg-cover bg-center opacity-10"></div>
+            <div class="absolute inset-0 bg-night/80"></div>
+
+            <div class="max-w-4xl mx-auto relative z-10">
+                
+                <!-- Gift Section -->
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <h2 class="font-cinzel text-3xl text-moon-gold mb-4">Wedding Gift</h2>
+                    <p class="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">Tanpa mengurangi rasa hormat, bagi Bapak/Ibu/Saudara/i yang ingin memberikan tanda kasih untuk kami, dapat melalui:</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-16">
+                     <div class="glass-card p-6 rounded-lg flex items-center justify-between border-l-4 border-l-moon-gold" data-aos="fade-right">
+                        <div>
+                            <p class="text-white font-bold text-lg">DANA</p>
+                            <p class="text-moon-gold font-mono text-xl my-1">0851 6114 1114</p>
+                            <p class="text-xs text-slate-500 uppercase">a.n Malik Faza</p>
+                        </div>
+                        <button onclick="copyText('085161141114')" class="text-slate-400 hover:text-white"><i class="fa-regular fa-copy text-lg"></i></button>
+                     </div>
+
+                     <div class="glass-card p-6 rounded-lg flex items-center justify-between border-l-4 border-l-blue-500" data-aos="fade-left">
+                        <div>
+                            <p class="text-white font-bold text-lg">SeaBank</p>
+                            <p class="text-blue-400 font-mono text-xl my-1">9016 4283 9446</p>
+                            <p class="text-xs text-slate-500 uppercase">a.n Annisa Sholiha</p>
+                        </div>
+                        <button onclick="copyText('901642839446')" class="text-slate-400 hover:text-white"><i class="fa-regular fa-copy text-lg"></i></button>
+                     </div>
+                </div>
+
+                <!-- RSVP Form -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden" data-aos="zoom-in">
+                    <!-- SVG DECOR: Top Right -->
+                    <svg class="corner-ornament top-0 right-0" viewBox="0 0 100 100" style="transform: rotate(90deg);">
+                         <path d="M95,95 C90,50 50,10 5,5 M30,30 C50,30 70,50 70,70" stroke-linecap="round" />
+                        <circle cx="5" cy="5" r="3" fill="#fbbf24" />
+                        <circle cx="95" cy="95" r="2" fill="#fbbf24" />
+                    </svg>
+
+                    <h2 class="font-cinzel text-2xl text-white text-center mb-6">Konfirmasi Kehadiran</h2>
+                    
+                    <form onsubmit="sendWhatsApp(event)" class="space-y-4 relative z-10">
+                        <input type="text" id="guestName" placeholder="Nama Lengkap" class="w-full bg-night-light border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-moon-gold focus:ring-1 focus:ring-moon-gold transition-all" required>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                             <select id="attendance" class="w-full bg-night-light border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-moon-gold transition-all">
+                                <option value="Hadir">Hadir</option>
+                                <option value="Tidak Hadir">Berhalangan</option>
+                            </select>
+                            <select id="paxCount" class="w-full bg-night-light border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-moon-gold transition-all">
+                                <option value="1">1 Orang</option>
+                                <option value="2">2 Orang</option>
+                            </select>
+                        </div>
+                        
+                        <textarea id="wishes" rows="3" placeholder="Berikan ucapan manis..." class="w-full bg-night-light border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-moon-gold focus:ring-1 focus:ring-moon-gold transition-all"></textarea>
+                        
+                        <button type="submit" class="w-full bg-moon-gold hover:bg-yellow-400 text-night font-bold py-3 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all transform hover:-translate-y-1">
+                            Kirim ke WhatsApp
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-black pt-12 pb-6 text-center border-t border-slate-900">
+            <h1 class="font-cinzel text-2xl text-slate-600 mb-2">Malik & Annisa</h1>
+            <p class="text-xs text-slate-700 tracking-[0.3em] uppercase mb-8">Midnight Edition</p>
+             <a href="https://wa.me/6285161141114?text=halo%20kak%20saya%20mau%20pesan%20undangan" target="_blank" class="text-[10px] text-slate-600 hover:text-moon-gold transition-colors flex items-center justify-center gap-1">
+                <i class="fa-brands fa-whatsapp text-green-500 text-sm"></i>
+                © 2026 Malikfaza Studio
+             </a>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // --- STARS GENERATOR ---
+        function createStars() {
+            const container = document.getElementById('star-field');
+            const starCount = 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const xy = Math.random() * 100;
+                const duration = Math.random() * 3 + 2; // 2-5s
+                const size = Math.random() * 2 + 1; // 1-3px
+                const opacity = Math.random();
+
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--opacity', opacity);
+                
+                container.appendChild(star);
+            }
+        }
+
+        // --- OPEN INVITATION ---
+        function openInvitation() {
+            const overlay = document.getElementById('opening-overlay');
+            const content = document.getElementById('opening-content');
+            const main = document.getElementById('main-content');
+            const audio = document.getElementById('bg-music');
+
+            if(audio) {
+                audio.volume = 0.5;
+                audio.play().catch(console.error);
+            }
+
+            content.style.opacity = '0';
+            content.style.transform = 'scale(0.9)'; // Fade out effect
+            
+            setTimeout(() => {
+                overlay.classList.add('is-open');
+            }, 500);
+
+            setTimeout(() => {
+                main.classList.remove('opacity-0');
+                document.body.classList.remove('modal-open');
+                setTimeout(() => { overlay.style.display = 'none'; }, 2500);
+                AOS.init({
+                    duration: 1000,
+                    once: true,
+                    offset: 50
+                }); 
+            }, 1000); 
+        }
+
+        // --- MUSIC ---
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            const icon = document.getElementById('icon-music');
+            if(audio.paused) {
+                audio.play();
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-compact-disc', 'animate-spin-slow');
+                icon.parentElement.style.opacity = '1';
+            } else {
+                audio.pause();
+                icon.classList.remove('fa-compact-disc', 'animate-spin-slow');
+                icon.classList.add('fa-play');
+                icon.parentElement.style.opacity = '0.5';
+            }
+        }
+
+        // --- COUNTDOWN ---
+        function initCountdown() {
+            const target = new Date("2026-03-10T08:00:00+07:00").getTime();
+            const el = document.getElementById('countdown');
+            
+            setInterval(() => {
+                const now = new Date().getTime();
+                const diff = target - now;
+                
+                if (diff < 0) { el.innerHTML = "Started"; return; }
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const boxClass = "flex flex-col items-center justify-center w-16 h-20 bg-night-light/80 border border-slate-700 rounded-lg shadow-lg backdrop-blur-sm";
+                const numClass = "text-xl font-bold text-white font-nunito";
+                const labelClass = "text-[10px] text-moon-gold uppercase tracking-widest mt-1";
+
+                el.innerHTML = `
+                    <div class="${boxClass}"><span class="${numClass}">${d}</span><span class="${labelClass}">Hari</span></div>
+                    <div class="${boxClass}"><span class="${numClass}">${h}</span><span class="${labelClass}">Jam</span></div>
+                    <div class="${boxClass}"><span class="${numClass}">${m}</span><span class="${labelClass}">Mnt</span></div>
+                    <div class="${boxClass} border-moon-gold/50"><span class="${numClass} text-moon-gold">${s}</span><span class="${labelClass}">Dtk</span></div>
+                `;
+            }, 1000);
+        }
+
+        // --- WHATSAPP ---
+        function sendWhatsApp(e) {
+            e.preventDefault();
+            const name = document.getElementById('guestName').value;
+            const status = document.getElementById('attendance').value;
+            const pax = document.getElementById('paxCount').value;
+            const msg = document.getElementById('wishes').value;
+            
+            const text = `*Midnight Invitation RSVP*%0A%0ANama: ${name}%0AStatus: ${status}%0AJumlah: ${pax}%0A%0A"${msg}"`;
+            window.open(`https://wa.me/6285161141114?text=${text}`, '_blank');
+        }
+
+        // --- COPY ---
+        function copyText(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => showSuccessAlert()).catch(() => fallbackCopyText(text));
+            } else {
+                fallbackCopyText(text);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) showSuccessAlert(); else showErrorAlert();
+            } catch (err) { showErrorAlert(); }
+            document.body.removeChild(textArea);
+        }
+
+        function showSuccessAlert() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Disalin!',
+                text: 'Nomor berhasil disalin',
+                background: '#0a1a2f',
+                color: '#fff',
+                timer: 1500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        function showErrorAlert() {
+             Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: 'Silakan salin manual',
+                background: '#0a1a2f',
+                color: '#fff',
+                timer: 1500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            initCountdown();
+        });
+    </script>
+</body>
+</html>
